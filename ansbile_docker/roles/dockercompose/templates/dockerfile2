@@ -1,0 +1,6 @@
+FROM couchdb
+
+MAINTAINER venkatane33@gmail.com
+
+# custom setup
+

@@ -1,0 +1,50 @@
+- name: create directoties for dockerfiles
+  file:
+    path: /home/ubuntu/web
+    state: directory
+
+- name: copy docker file for Instance-1
+  template:
+    src: dockerfile1
+    dest: /home/ubuntu/web/Dockerfile
+  when: ansible_hostname == "MSR-test-Instance-1"
+
+- name: copy docker file for Instance-2
+  template:
+    src: dockerfile2
+    dest: /home/ubuntu/web/Dockerfile
+  when: ansible_hostname == "MSR-test-Instance-2"  
+
+- name: docker compose up apache
+  docker_service:
+       project_name: apache
+       definition:
+          web:
+            build: /home/ubuntu/web/ 
+            ports:
+              - "80:80"
+  register: output
+  when: ansible_hostname == "MSR-test-Instance-1"
+- debug:
+    var: output
+  when: ansible_hostname == "MSR-test-Instance-1"
+
+- name: docker compose up couch db
+  docker_service:
+    project_name: couchdb
+    definition:
+        db:
+          build: /home/ubuntu/web/
+          ports:
+            - "5984:5984"
+  register: output
+  when: ansible_hostname == "MSR-test-Instance-2"   
+- debug:
+    var: output
+  when: ansible_hostname == "MSR-test-Instance-2"
+
+  
+
+  
+    
+
